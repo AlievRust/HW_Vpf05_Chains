@@ -17,7 +17,6 @@ from langchain_openai import ChatOpenAI
 
 PROJECT_ROOT = Path(__file__).resolve().parent
 LOG_FILE = PROJECT_ROOT / "article_generation.log"
-ARTICLE_FILE = PROJECT_ROOT / "article.md"
 DOTENV_FILE = PROJECT_ROOT / ".env"
 DEFAULT_MODEL = "gpt-5.4-nano"
 
@@ -394,10 +393,22 @@ def run_stage(stage_name: str, chain: Any, payload: dict[str, Any] | str) -> Any
     return result
 
 
-def save_article(article_text: str) -> None:
-    """Persist the final article to article.md."""
-    ARTICLE_FILE.write_text(article_text.strip() + "\n", encoding="utf-8")
-    logger.info("Сохранён файл %s", ARTICLE_FILE.name)
+def save_article(article_text: str) -> Path:
+    """Persist the final article to the next available article_XXXX.md file."""
+    article_file = next_article_path()
+    article_file.write_text(article_text.strip() + "\n", encoding="utf-8")
+    logger.info("Сохранён файл %s", article_file.name)
+    return article_file
+
+
+def next_article_path() -> Path:
+    """Return the next unused article_XXXX.md filename."""
+    index = 1
+    while True:
+        candidate = PROJECT_ROOT / f"article_{index:04d}.md"
+        if not candidate.exists():
+            return candidate
+        index += 1
 
 
 def main() -> int:
@@ -437,9 +448,9 @@ def main() -> int:
         if not isinstance(final_article, str) or not final_article.strip():
             raise ArticleGenerationError("review_chain: итоговая статья оказалась пустой.")
 
-        save_article(final_article)
+        created_file = save_article(final_article)
         logger.info("Program completed successfully")
-        print("Статья создана: article.md")
+        print(f"Статья создана: {created_file.name}")
         return 0
 
     except ArticleGenerationError as exc:
