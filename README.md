@@ -75,7 +75,7 @@ copy .env.example .env
 
 - `OPENAI_API_KEY` - API-ключ;
 - `OPENAI_BASE_URL` - необязательный base URL для OpenAI-compatible API;
-- `OPENAI_MODEL` - имя модели, по умолчанию `gpt-4o-mini`.
+- `OPENAI_MODEL` - имя модели, по умолчанию `gpt-5.4-nano`.
 
 ## Пример запуска
 

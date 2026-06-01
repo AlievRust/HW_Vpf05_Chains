@@ -19,7 +19,7 @@ PROJECT_ROOT = Path(__file__).resolve().parent
 LOG_FILE = PROJECT_ROOT / "article_generation.log"
 ARTICLE_FILE = PROJECT_ROOT / "article.md"
 DOTENV_FILE = PROJECT_ROOT / ".env"
-DEFAULT_MODEL = "gpt-4o-mini"
+DEFAULT_MODEL = "gpt-5.4-nano"
 
 
 logger = logging.getLogger(__name__)
@@ -85,7 +85,7 @@ def build_llm() -> ChatOpenAI:
     # Pass the key explicitly so the script works even if the runtime reads env vars loosely.
     kwargs: dict[str, Any] = {
         "model": model_name,
-        "temperature": 0.7,
+        "temperature": 1.0,
         "api_key": api_key,
     }
     if base_url:
